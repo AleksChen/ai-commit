@@ -15,6 +15,7 @@
     "ai-commit.mjs",
     "src/",
     "README.md",
+    "README_*.md",
     "LICENSE",
     "CONTRIBUTING.md"
   ],
