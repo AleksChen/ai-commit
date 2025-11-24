@@ -1,0 +1,62 @@
+{
+  "name": "@alekschen/ai-commit",
+  "version": "1.0.0",
+  "description": "Generate Conventional Commit messages from git diff using OpenAI compatible APIs",
+  "type": "module",
+  "bin": {
+    "ai-commit": "./ai-commit.mjs"
+  },
+  "scripts": {
+    "start": "node ./ai-commit.mjs",
+    "test": "vitest run",
+    "prepublishOnly": "npm test"
+  },
+  "files": [
+    "ai-commit.mjs",
+    "src/",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AleksChen/ai-commit.git"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "conventional-commits",
+    "openai",
+    "ai",
+    "gpt",
+    "cli",
+    "git-tools",
+    "productivity",
+    "automation"
+  ],
+  "author": "AleksChen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AleksChen/ai-commit/issues"
+  },
+  "homepage": "https://github.com/AleksChen/ai-commit#readme",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.0",
+    "commander": "^14.0.2",
+    "figlet": "^1.8.2",
+    "inquirer": "^12.9.3",
+    "ora": "^8.2.0",
+    "signal-exit": "^4.1.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0"
+  }
+}
