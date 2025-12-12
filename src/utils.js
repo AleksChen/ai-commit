@@ -97,9 +97,18 @@ export function buildPrompt(diff, hint) {
     hint ? `Additional context: ${hint}` : "",
     "Here is the change summary:\n\n" + diff,
     "\n" + lengthConstraint,
+    "\nIMPORTANT: Please generate 3 distinct commit message options. Separate each option with \"---OPTION---\". Do not number them or add labels like 'Option 1'. Output ONLY the raw commit message for each option.",
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+export function parseOptions(text) {
+  if (!text) return [];
+  return text
+    .split("---OPTION---")
+    .map(opt => assembleCommitText(opt))
+    .filter(opt => opt.length > 0);
 }
 
 export function assembleCommitText(aiText) {
@@ -197,37 +206,42 @@ export function compressDiff(
     totalDels += dels;
 
     // Intelligent snippet extraction
-    if (includeAddedSnippets && adds > 0) {
+    if (includeAddedSnippets && (adds > 0 || dels > 0)) {
       let collected = 0;
-      let inHunk = false;
 
       for (const l of lines) {
+        // Skip file headers and meta info
         if (
           l.startsWith("+++") ||
           l.startsWith("---") ||
-          l.startsWith("diff --git ")
+          l.startsWith("diff --git ") ||
+          l.startsWith("index ") ||
+          l.startsWith("new file") ||
+          l.startsWith("deleted file") ||
+          l.startsWith("similarity index") ||
+          l.startsWith("rename ")
         )
           continue;
 
+        // Keep Hunk headers for context
         if (l.startsWith("@@")) {
           if (collected < maxLinesPerFile) {
             snippets.push(l);
-            inHunk = true;
           }
           continue;
         }
 
-        if (inHunk && l.startsWith("+")) {
-          // Keep only non-empty lines and non-comment lines
+        // Collect both added and deleted lines for better context
+        if (l.startsWith("+") || l.startsWith("-")) {
           const content = l.slice(1);
-          if (
-            content.trim() &&
-            !content.trim().startsWith("//") &&
-            !content.trim().startsWith("/*")
-          ) {
-            snippets.push(content);
+          // Only skip completely empty lines, KEEP comments for documentation updates
+          if (content.trim()) {
+            snippets.push(l);
             collected++;
-            if (collected >= maxLinesPerFile) break;
+            if (collected >= maxLinesPerFile) {
+              snippets.push("...");
+              break;
+            }
           }
         }
       }

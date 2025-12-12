@@ -1,6 +1,6 @@
 {
   "name": "@alekschen/ai-commit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Generate Conventional Commit messages from git diff using OpenAI compatible APIs",
   "type": "module",
   "bin": {
@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node ./ai-commit.mjs",
     "test": "vitest run",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "release": "standard-version"
   },
   "files": [
     "ai-commit.mjs",
@@ -23,7 +24,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
@@ -55,9 +56,11 @@
     "figlet": "^1.8.2",
     "inquirer": "^12.9.3",
     "ora": "^8.2.0",
-    "signal-exit": "^4.1.0"
+    "signal-exit": "^4.1.0",
+    "update-notifier": "^7.3.1"
   },
   "devDependencies": {
+    "standard-version": "^9.5.0",
     "vitest": "^1.0.0"
   }
 }

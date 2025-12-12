@@ -10,6 +10,7 @@ import boxen from "boxen";
 import figlet from "figlet";
 import { onExit } from "signal-exit";
 import axios from "axios";
+import updateNotifier from "update-notifier";
 import i18n from "./src/i18n.js";
 
 process.on("SIGINT", () => {
@@ -21,11 +22,13 @@ process.on("SIGINT", () => {
 });
 import { handleConfigCommand, setApiKeys } from "./src/config.js";
 import { recordUsage, showStats } from "./src/cost_stats.js";
-import { buildPrompt, assembleCommitText, compressDiff } from "./src/utils.js";
+import { buildPrompt, assembleCommitText, compressDiff, parseOptions } from "./src/utils.js";
 
 const pkg = JSON.parse(
   fs.readFileSync(new URL("./package.json", import.meta.url), "utf8")
 );
+
+updateNotifier({ pkg }).notify();
 
 const DEFAULT_CONFIG = {
   BASE_URL: "https://api.openai.com/v1",
@@ -209,6 +212,73 @@ async function callAI(messages, { apiKey, baseUrl, model }) {
   }
 }
 
+async function generateWithSelection(prompt, auth, options, isRegen = false) {
+  const spinnerLabel = isRegen ? "ai.regenerating" : "ai.generating";
+  const successLabel = isRegen ? "ai.regenerated" : "ai.generated";
+  
+  const spinner = ora(i18n.t(spinnerLabel)).start();
+  const startTime = Date.now();
+
+  try {
+    const { content, tokens } = await callAI(
+      [{ role: "user", content: prompt }],
+      auth
+    );
+    const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+    spinner.succeed(i18n.t(successLabel, { duration }));
+
+    if (tokens.total > 0) {
+       if (!options.quiet) {
+          console.log(chalk.gray(i18n.t("ai.tokens", {
+              prompt: tokens.prompt,
+              completion: tokens.completion,
+              total: tokens.total
+          })));
+       }
+       recordUsage({
+           model: auth.model,
+           duration: parseFloat(duration),
+           tokens
+       });
+    }
+
+    const choices = parseOptions(content);
+    if (!choices || choices.length === 0) {
+        throw new Error(i18n.t("ai.noMessage"));
+    }
+
+    if (options.write || options.print || choices.length === 1) {
+        return choices[0];
+    }
+
+    // Display options
+    console.log("");
+    choices.forEach((c, i) => {
+        console.log(chalk.yellow(`Option ${i + 1}:`));
+        console.log(chalk.gray("----------------------------------------"));
+        console.log(c);
+        console.log(chalk.gray("----------------------------------------\n"));
+    });
+
+    const { selectedIndex } = await inquirer.prompt([
+        {
+            type: "list",
+            name: "selectedIndex",
+            message: i18n.t("commit.selectOption"),
+            choices: choices.map((c, i) => ({
+                name: `Option ${i + 1}: ${c.split('\n')[0].substring(0, 50)}...`,
+                value: i
+            }))
+        }
+    ]);
+    return choices[selectedIndex];
+
+  } catch (error) {
+      spinner.fail(i18n.t(isRegen ? "ai.regenerationFailed" : "ai.generationFailed"));
+      throw error;
+  }
+}
+
 // Main command logic
 async function runMain(options, hintParts) {
   // Banner
@@ -280,45 +350,13 @@ async function runMain(options, hintParts) {
     i18n.t("compression.compressed", { length: condensed.length })
   );
 
-  const aiSpinner = ora({
-    text: i18n.t("ai.generating"),
-  }).start();
-  const startTime = Date.now();
   const hint = hintParts.join(" ");
   const prompt = buildPrompt(condensed, hint);
 
   let commitMsg;
   try {
-    const { content, tokens } = await callAI(
-      [{ role: "user", content: prompt }],
-      auth
-    );
-    const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-    aiSpinner.succeed(i18n.t("ai.generated", { duration }));
-
-    // Record tokens
-    if (tokens.total > 0) {
-      if (!options.quiet) {
-        console.log(
-          chalk.gray(
-            i18n.t("ai.tokens", {
-              prompt: tokens.prompt,
-              completion: tokens.completion,
-              total: tokens.total,
-            })
-          )
-        );
-      }
-      recordUsage({
-        model: auth.model,
-        duration: parseFloat(duration),
-        tokens,
-      });
-    }
-
-    commitMsg = assembleCommitText(content);
+    commitMsg = await generateWithSelection(prompt, auth, options, false);
   } catch (error) {
-    aiSpinner.fail(i18n.t("ai.generationFailed"));
     console.error(chalk.red(error.message));
     process.exit(1);
   }
@@ -414,17 +452,10 @@ async function runMain(options, hintParts) {
     }
 
     if (userChoice === "regenerate") {
-      const regenSpinner = ora(i18n.t("ai.regenerating")).start();
       try {
-        const { content } = await callAI(
-          [{ role: "user", content: prompt }],
-          auth
-        );
-        regenSpinner.succeed(i18n.t("ai.regenerated", { duration: "..." }));
-        const newMsg = assembleCommitText(content);
+        const newMsg = await generateWithSelection(prompt, auth, options, true);
         if (newMsg) commitMsg = newMsg;
       } catch (e) {
-        regenSpinner.fail(i18n.t("ai.regenerationFailed"));
         console.error(e.message);
       }
     }

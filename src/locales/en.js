@@ -73,6 +73,7 @@ export default {
     generated: "Generated commit message",
     regenerated: "Regenerated commit message",
     lengthWarning: "⚠️ Warning: Commit message contains {count} Chinese characters, exceeding the 18 character limit",
+    selectOption: "Please select a commit message option:",
     selectAction: "Please select an action:",
     choices: {
       commit: "✅ Commit",

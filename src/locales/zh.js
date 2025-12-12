@@ -73,6 +73,7 @@ export default {
     generated: "生成的提交信息",
     regenerated: "重新生成的提交信息",
     lengthWarning: "⚠️ 警告：提交信息包含 {count} 个汉字，超过18个字符的限制",
+    selectOption: "请选择一个提交信息选项：",
     selectAction: "请选择操作：",
     choices: {
       commit: "✅ 提交 (commit)",

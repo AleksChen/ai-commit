@@ -29,6 +29,14 @@ Ensure you have Node.js (>= 16.0.0) installed.
 npm install -g @alekschen/ai-commit
 ```
 
+## Updating
+
+This tool automatically checks for updates and will notify you if a new version is available. To update manually:
+
+```bash
+npm install -g @alekschen/ai-commit@latest
+```
+
 ## Quick Start
 
 1.  **Initialize Configuration**
