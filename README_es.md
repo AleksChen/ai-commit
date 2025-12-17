@@ -13,11 +13,14 @@ Una potente herramienta CLI que genera mensajes de **Conventional Commits** a pa
 - 🔒 **Privacidad Primero**: Tu código se envía directamente a tu proveedor de API configurado. Sin servidores intermedios, sin rastreo. **100% Código Abierto**: audítalo tú mismo. La configuración se almacena localmente, garantizando una seguridad absoluta sin puertas traseras.
 - 🤖 **Generación impulsada por IA**: Analiza tu `git diff` para generar mensajes de commit precisos y descriptivos.
 - 📏 **Conventional Commits**: Sigue el formato estándar (feat, fix, chore, etc.) desde el primer momento.
+- 🎯 **Múltiples Opciones**: Genera múltiples variaciones de mensajes de commit para que elijas.
 - 🌍 **Soporte Multilingüe**: Completamente localizado en **Inglés**, **Chino**, **Japonés**, **Coreano**, **Español** y **Árabe**.
 - 🔧 **Altamente Configurable**: Soporte para APIs personalizadas compatibles con OpenAI (DeepSeek, Azure, etc.), modelos personalizados y prompts.
 - 📊 **Seguimiento de Costos**: Estadísticas de uso integradas para rastrear tu consumo de tokens y costos.
 - 🚀 **Modo Interactivo**: Revisa, edita, regenera o haz commit directamente desde la CLI.
 - 🧠 **Contexto Inteligente**: Comprime automáticamente diffs grandes para ajustarse a los límites de tokens mientras preserva el contexto.
+- 🎨 **Arte ASCII Divertido**: Banner de inicio personalizable (Psyduck, Totoro, Gato, etc.).
+- 🪝 **Soporte de Git Hook**: Se puede usar como hook `prepare-commit-msg` o con otras herramientas de git.
 
 ## Instalación
 
@@ -61,6 +64,7 @@ npm install -g @alekschen/ai-commit@latest
 
 3.  **Revisar y Confirmar**
     La herramienta generará un mensaje. Puedes:
+    - **Seleccionar**: Elige tu mensaje preferido.
     - **Confirmar**: Hacer commit inmediatamente.
     - **Editar**: Modificar el mensaje en tu editor predeterminado.
     - **Regenerar**: Pedir a la IA que lo intente de nuevo.
@@ -79,6 +83,9 @@ ai-commit "refactorizar lógica de autenticación"
 # Imprimir el mensaje en stdout sin menú interactivo (útil para scripts)
 ai-commit --print
 
+# Escribir mensaje en un archivo (útil para git hooks como prepare-commit-msg)
+ai-commit --write .git/COMMIT_EDITMSG
+
 # Ejecutar en modo silencioso (suprimir banners/logs)
 ai-commit --quiet
 ```
@@ -96,6 +103,7 @@ Puedes configurar:
 - **Proveedor de API**: Base URL (por defecto: `https://api.openai.com/v1`) y API Key.
 - **Modelo**: Elige cualquier modelo de chat (por defecto: `gpt-3.5-turbo`).
 - **Estilo de Prompt**: Elige entre plantillas Predeterminada, Emoji, Simple o Personalizada.
+- **Arte ASCII**: Personaliza el banner de inicio.
 - **Idioma**: Cambiar idioma de la interfaz (Inglés, Chino, Japonés, Coreano, Español, Árabe).
 
 ### Ver Estadísticas de Uso
@@ -116,7 +124,12 @@ Puedes anular la configuración utilizando variables de entorno, útil para pipe
 | `AI_COMMIT_BASE_URL` | Base URL de API personalizada |
 | `AI_COMMIT_MODEL` | Nombre del modelo (ej. `gpt-4`, `deepseek-chat`) |
 | `AI_COMMIT_MAX_CHARS` | Caracteres máximos para contexto diff (por defecto: 200000) |
+| `AI_COMMIT_MAX_FILES` | Máximo de archivos a procesar (por defecto: 50) |
+| `AI_COMMIT_MAX_LINES` | Máximo de líneas por archivo a incluir (por defecto: 15) |
+| `AI_COMMIT_INCLUDE_SNIPPETS` | Establecer a `0` para deshabilitar fragmentos de código en el prompt |
 | `AI_COMMIT_AUTO_STAGE` | Establecer a `1` para auto-preparar cambios, `0` para fallar si está vacío |
+| `AI_COMMIT_SIGN` | Establecer a `1` para firmar commits (`git commit -S`) |
+| `AI_COMMIT_AMEND` | Establecer a `1` para enmendar commits (`git commit --amend`) |
 
 ## Contribuir
 
@@ -131,4 +144,3 @@ Puedes anular la configuración utilizando variables de entorno, útil para pipe
 ## Licencia
 
 Este proyecto está licenciado bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para más detalles.
-

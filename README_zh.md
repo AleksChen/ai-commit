@@ -13,11 +13,14 @@
 - 🔒 **隐私优先**：你的代码仅直接发送至你配置的 API 提供商。没有中间服务器，不进行追踪。**代码完全开源**，欢迎审计。数据仅在本地存储，绝对安全无后门。
 - 🤖 **AI 驱动生成**：分析你的 `git diff` 生成准确且描述性的提交信息。
 - 📏 **Conventional Commits**：开箱即用地遵循标准格式（feat, fix, chore 等）。
+- 🎯 **多样化选项**：生成多个提交信息版本供你选择。
 - 🌍 **多语言支持**：完全本地化的 **英语**、**中文**、**日语**、**韩语**、**西班牙语** 和 **阿拉伯语** 支持。
 - 🔧 **高度可配置**：支持自定义 OpenAI 兼容 API（DeepSeek, Azure 等）、自定义模型和 Prompt。
 - 📊 **成本追踪**：内置使用统计，追踪你的 Token 消耗和成本。
 - 🚀 **交互模式**：直接从 CLI 审查、编辑、重新生成或提交。
 - 🧠 **智能上下文**：自动压缩大型 diff 以适应 Token 限制，同时保留上下文。
+- 🎨 **趣味字符画**：可自定义的启动 Banner（Psyduck, Totoro, Cat 等）。
+- 🪝 **Git Hook 支持**：可作为 `prepare-commit-msg` 钩子或与其他 Git 工具配合使用。
 
 ## 安装
 
@@ -61,7 +64,7 @@ npm install -g @alekschen/ai-commit@latest
 
 3.  **审查与提交**
     工具将生成一条信息。你可以：
-    - **确认**：立即提交。
+    - **选择**：选择你偏好的信息。
     - **编辑**：在你的默认编辑器中修改信息。
     - **重新生成**：让 AI 再试一次。
 
@@ -78,6 +81,9 @@ ai-commit "重构认证逻辑"
 
 # 打印信息到 stdout 而不进入交互菜单（适用于脚本）
 ai-commit --print
+
+# 将信息写入文件（适用于 git hooks 如 prepare-commit-msg）
+ai-commit --write .git/COMMIT_EDITMSG
 
 # 运行静默模式（隐藏 Banner/日志）
 ai-commit --quiet
@@ -96,6 +102,7 @@ ai-commit config
 - **API 提供商**：Base URL（默认：`https://api.openai.com/v1`）和 API Key。
 - **模型**：选择任意聊天模型（默认：`gpt-3.5-turbo`）。
 - **Prompt 风格**：选择默认、Emoji、简洁或自定义模板。
+- **ASCII Art**：自定义启动 Banner。
 - **语言**：切换 UI 语言（支持英语、中文、日语、韩语、西班牙语、阿拉伯语）。
 
 ### 查看使用统计
@@ -116,7 +123,12 @@ ai-commit cost
 | `AI_COMMIT_BASE_URL` | 自定义 API Base URL |
 | `AI_COMMIT_MODEL` | 模型名称（如 `gpt-4`, `deepseek-chat`） |
 | `AI_COMMIT_MAX_CHARS` | diff 上下文的最大字符数（默认：200000） |
+| `AI_COMMIT_MAX_FILES` | 最大处理文件数（默认：50） |
+| `AI_COMMIT_MAX_LINES` | 每个文件包含的最大行数（默认：15） |
+| `AI_COMMIT_INCLUDE_SNIPPETS` | 设置为 `0` 以在 Prompt 中禁用代码片段 |
 | `AI_COMMIT_AUTO_STAGE` | 设置为 `1` 自动暂存更改，`0` 如果为空则失败 |
+| `AI_COMMIT_SIGN` | 设置为 `1` 以签名提交 (`git commit -S`) |
+| `AI_COMMIT_AMEND` | 设置为 `1` 以修正提交 (`git commit --amend`) |
 
 ## 贡献
 
@@ -131,4 +143,3 @@ ai-commit cost
 ## 许可证
 
 本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
-
