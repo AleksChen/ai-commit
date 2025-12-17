@@ -2,39 +2,43 @@ import i18n from "./i18n.js";
 
 export function buildPrompt(diff, hint) {
   const lang = i18n.getCurrentLanguage?.() || "en";
-  const promptType = i18n.getConfig('promptType') || 'default';
-  const customPrompt = i18n.getConfig('customPrompt');
+  const promptType = i18n.getConfig("promptType") || "default";
+  const customPrompt = i18n.getConfig("customPrompt");
 
   // 1. Handle Custom
-  if (promptType === 'custom' && customPrompt) {
+  if (promptType === "custom" && customPrompt) {
     return customPrompt
       .replace(/\{diff\}/g, diff)
-      .replace(/\{hint\}/g, hint || '')
+      .replace(/\{hint\}/g, hint || "")
       .replace(/\{locale\}/g, lang);
   }
 
   // 2. Handle Simple (Title only)
-  if (promptType === 'simple') {
-     return [
-        "You are a professional commit message generator.",
-        "Generate a SINGLE line commit title from the following git diff.",
-        "Format: <type>: <description>",
-        `Language: ${lang}`,
-        hint ? `Additional context: ${hint}` : "",
-        "Here is the change summary:\n\n" + diff
-     ].filter(Boolean).join("\n");
+  if (promptType === "simple") {
+    return [
+      "You are a professional commit message generator.",
+      "Generate a SINGLE line commit title from the following git diff.",
+      "Format: <type>: <description>",
+      `Language: ${lang}`,
+      hint ? `Additional context: ${hint}` : "",
+      "Here is the change summary:\n\n" + diff,
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
 
   const baseRequirements = [
-      "Requirements:",
-      "- Choose appropriate type: feat|fix|docs|refactor|perf|build|chore|test|ci|style",
-      "- Title must be concise and clear, describing only the main changes",
-      "- Ignore minor details, focus on main functional changes",
-      "- If there are breaking changes, start description with BREAKING CHANGE:",
+    "Requirements:",
+    "- Choose appropriate type: feat|fix|docs|refactor|perf|build|chore|test|ci|style",
+    "- Title must be concise and clear, describing only the main changes",
+    "- Ignore minor details, focus on main functional changes",
+    "- If there are breaking changes, start description with BREAKING CHANGE:",
   ];
 
-  if (promptType === 'emoji') {
-      baseRequirements.push("- Use Gitmoji style emojis at the beginning of the title (e.g. 🐛 fix:, ✨ feat:)");
+  if (promptType === "emoji") {
+    baseRequirements.push(
+      "- Use Gitmoji style emojis at the beginning of the title (e.g. 🐛 fix:, ✨ feat:)"
+    );
   }
 
   let langRequirements = [];
@@ -42,52 +46,58 @@ export function buildPrompt(diff, hint) {
 
   switch (lang) {
     case "zh":
-        langRequirements = [
-            "- Description should be in Chinese and focus on core changes",
-            "- IMPORTANT: The total length of the commit message (including title and description) must NOT exceed 18 Chinese characters",
-            "- Keep it extremely concise and to the point"
-        ];
-        lengthConstraint = "Please output only the commit message itself, no explanations. Format: type: short title\n\ndescription (optional)";
-        break;
+      langRequirements = [
+        "- Description should be in Chinese and focus on core changes",
+        "- IMPORTANT: The total length of the commit message (including title and description) must NOT exceed 18 Chinese characters",
+        "- Keep it extremely concise and to the point",
+      ];
+      lengthConstraint =
+        "Please output only the commit message itself, no explanations. Format: type: short title\n\ndescription (optional)";
+      break;
     case "ko":
-        langRequirements = [
-            "- Description should be in Korean (Hangul)",
-            "- IMPORTANT: The total length of the commit message must be under 25 characters",
-            "- Use polite but concise language"
-        ];
-        lengthConstraint = "Output only the commit message. Format: type: short title\n\ndescription (optional)";
-        break;
+      langRequirements = [
+        "- Description should be in Korean (Hangul)",
+        "- IMPORTANT: The total length of the commit message must be under 25 characters",
+        "- Use polite but concise language",
+      ];
+      lengthConstraint =
+        "Output only the commit message. Format: type: short title\n\ndescription (optional)";
+      break;
     case "ja":
-        langRequirements = [
-            "- Description should be in Japanese",
-            "- IMPORTANT: The total length of the commit message must be under 25 characters",
-            "- Use concise technical Japanese"
-        ];
-        lengthConstraint = "Output only the commit message. Format: type: short title\n\ndescription (optional)";
-        break;
+      langRequirements = [
+        "- Description should be in Japanese",
+        "- IMPORTANT: The total length of the commit message must be under 25 characters",
+        "- Use concise technical Japanese",
+      ];
+      lengthConstraint =
+        "Output only the commit message. Format: type: short title\n\ndescription (optional)";
+      break;
     case "es":
-        langRequirements = [
-            "- Description should be in Spanish",
-            "- IMPORTANT: Keep total length under 80 characters",
-            "- Use concise technical Spanish"
-        ];
-        lengthConstraint = "Output only the commit message. Format: type: short title\n\ndescription (optional)";
-        break;
+      langRequirements = [
+        "- Description should be in Spanish",
+        "- IMPORTANT: Keep total length under 80 characters",
+        "- Use concise technical Spanish",
+      ];
+      lengthConstraint =
+        "Output only the commit message. Format: type: short title\n\ndescription (optional)";
+      break;
     case "ar":
-        langRequirements = [
-            "- Description should be in Arabic",
-            "- IMPORTANT: Keep total length under 80 characters",
-            "- Use concise technical Arabic"
-        ];
-        lengthConstraint = "Output only the commit message. Format: type: short title\n\ndescription (optional)";
-        break;
+      langRequirements = [
+        "- Description should be in Arabic",
+        "- IMPORTANT: Keep total length under 80 characters",
+        "- Use concise technical Arabic",
+      ];
+      lengthConstraint =
+        "Output only the commit message. Format: type: short title\n\ndescription (optional)";
+      break;
     default: // en
-        langRequirements = [
-            "- Title and description must be in English",
-            "- IMPORTANT: Keep total length (title + description) under 80 characters"
-        ];
-        lengthConstraint = "Output only the commit message, no explanations. Format: type: short title\n\ndescription (optional)";
-        break;
+      langRequirements = [
+        "- Title and description must be in English",
+        "- IMPORTANT: Keep total length (title + description) under 80 characters",
+      ];
+      lengthConstraint =
+        "Output only the commit message, no explanations. Format: type: short title\n\ndescription (optional)";
+      break;
   }
 
   return [
@@ -97,7 +107,30 @@ export function buildPrompt(diff, hint) {
     hint ? `Additional context: ${hint}` : "",
     "Here is the change summary:\n\n" + diff,
     "\n" + lengthConstraint,
-    "\nIMPORTANT: Please generate 3 distinct commit message options. Separate each option with \"---OPTION---\". Do not number them or add labels like 'Option 1'. Output ONLY the raw commit message for each option.",
+    `\nIMPORTANT:
+      - You MUST generate EXACTLY 3 commit message options.
+      - Output format:
+        1) First option text
+        2) A single line containing ONLY: ---OPTION---
+        3) Second option text
+        4) A single line containing ONLY: ---OPTION---
+        5) Third option text
+      - Do NOT add numbering like "Option 1", "1.", "(1)".
+      - Do NOT add any explanation, comment, or markdown code fences.
+      - Do NOT use the string ---OPTION--- inside any commit message content.
+
+      GOOD EXAMPLE (structure only, content is placeholder):
+      feat: first title
+
+      ---OPTION---
+      fix: second title
+
+      ---OPTION---
+      docs: third title
+
+      BAD EXAMPLE (DO NOT DO THIS):
+      Option 1: feat: foo
+      ---OPTION--- Option 2: fix: bar`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -105,10 +138,89 @@ export function buildPrompt(diff, hint) {
 
 export function parseOptions(text) {
   if (!text) return [];
-  return text
-    .split("---OPTION---")
-    .map(opt => assembleCommitText(opt))
-    .filter(opt => opt.length > 0);
+
+  // First, clean the text to handle potential escape sequences
+  let cleaned = text.trim();
+
+  // Try multiple splitting strategies in order of preference
+
+  // Strategy 1: Standard separator with flexible whitespace (case-insensitive)
+  // Matches: ---OPTION---, ---option---, --- OPTION ---, etc.
+  const separators = [
+    /---\s*OPTION\s*---/gi, // Standard: ---OPTION---
+    /--\s*OPTION\s*--/gi, // Variant: --OPTION--
+    /====\s*OPTION\s*====/gi, // Variant: ====OPTION====
+    /^\s*OPTION\s*\d+\s*:?\s*$/gim, // Variant: OPTION 1:
+    /^\s*Option\s*\d+\s*:?\s*$/gim, // Variant: Option 1:
+  ];
+
+  for (const separatorRegex of separators) {
+    // Reset regex lastIndex for global regex
+    separatorRegex.lastIndex = 0;
+    if (separatorRegex.test(cleaned)) {
+      separatorRegex.lastIndex = 0; // Reset again before split
+      const parts = cleaned.split(separatorRegex);
+      if (parts.length > 1) {
+        const options = parts
+          .map((opt) => assembleCommitText(opt))
+          .filter((opt) => opt.length > 0);
+        if (options.length > 0) return options;
+      }
+    }
+  }
+
+  // Strategy 2: Split by multiple consecutive blank lines (likely separator)
+  // This handles cases where AI uses blank lines to separate options
+  const doubleNewlineRegex = /\n\s*\n\s*\n+/;
+  if (doubleNewlineRegex.test(cleaned)) {
+    const parts = cleaned.split(/\n\s*\n\s*\n+/);
+    if (parts.length >= 2) {
+      // Filter out very short parts (likely not valid commit messages)
+      const options = parts
+        .map((opt) => assembleCommitText(opt))
+        .filter((opt) => opt.length > 10); // Minimum length for a commit message
+      if (options.length >= 2) return options;
+    }
+  }
+
+  // Strategy 3: Try to detect numbered options (Option 1:, 1., etc.)
+  const numberedPattern = /^(?:Option\s*)?\d+[.:]\s*/gim;
+  numberedPattern.lastIndex = 0;
+  if (numberedPattern.test(cleaned)) {
+    numberedPattern.lastIndex = 0; // Reset before split
+    const parts = cleaned.split(numberedPattern);
+    if (parts.length > 1) {
+      // First part might be preamble, skip if too short
+      const options = parts
+        .slice(1) // Skip first part (usually preamble)
+        .map((opt) => assembleCommitText(opt))
+        .filter((opt) => opt.length > 0);
+      if (options.length > 0) return options;
+    }
+  }
+
+  // Strategy 4: If all else fails, treat as single option
+  // But first check if it looks like multiple messages concatenated
+  // by checking for multiple "type:" patterns (e.g., "feat:", "fix:")
+  const typePattern =
+    /^(feat|fix|docs|refactor|perf|build|chore|test|ci|style):/gim;
+  const matches = cleaned.match(typePattern);
+  if (matches && matches.length > 1) {
+    // Likely multiple commit messages, try to split by type pattern
+    const parts = cleaned.split(
+      /(?=^(?:feat|fix|docs|refactor|perf|build|chore|test|ci|style):)/gim
+    );
+    if (parts.length > 1) {
+      const options = parts
+        .map((opt) => assembleCommitText(opt))
+        .filter((opt) => opt.length > 0);
+      if (options.length > 1) return options;
+    }
+  }
+
+  // Fallback: return as single option
+  const single = assembleCommitText(cleaned);
+  return single ? [single] : [];
 }
 
 export function assembleCommitText(aiText) {
@@ -262,14 +374,18 @@ export function compressDiff(
 
   // Add omission info if too many files
   if (sections.length > fileCount) {
-    summaries.push(`... ${i18n.t("compression.moreFiles", { count: sections.length - fileCount })}`);
+    summaries.push(
+      `... ${i18n.t("compression.moreFiles", {
+        count: sections.length - fileCount,
+      })}`
+    );
   }
 
-  const head = i18n.t("compression.summary", { 
-    total: sections.length, 
-    adds: totalAdds, 
-    dels: totalDels, 
-    shown: fileCount 
+  const head = i18n.t("compression.summary", {
+    total: sections.length,
+    adds: totalAdds,
+    dels: totalDels,
+    shown: fileCount,
   });
   return [head, ...summaries].join("\n\n");
 }
