@@ -1,6 +1,6 @@
 {
   "name": "@alekschen/ai-commit",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Generate Conventional Commit messages from git diff using OpenAI compatible APIs",
   "type": "module",
   "bin": {
