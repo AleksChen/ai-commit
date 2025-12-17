@@ -4,7 +4,7 @@
   "description": "Generate Conventional Commit messages from git diff using OpenAI compatible APIs",
   "type": "module",
   "bin": {
-    "ai-commit": "./ai-commit.mjs"
+    "ai-commit": "ai-commit.mjs"
   },
   "scripts": {
     "start": "node ./ai-commit.mjs",
