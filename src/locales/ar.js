@@ -65,8 +65,8 @@ export default {
     summary: "إجمالي {total} ملفات متغيرة, +{adds} -{dels} أسطر (عرض {shown} تغييرات رئيسية)",
   },
   auth: {
-    getting: "🔑 الحصول على المصادقة...",
-    success: "✅ المصادقة ناجحة",
+    getting: "🔑 التحقق من التكوين...",
+    success: "✅ تم التحقق من التكوين",
     setupRequired: "❌ مفتاح API غير مكون. قم بتشغيل 'ai-commit config' أو استخدم متغير البيئة AI_COMMIT_API_KEY.",
   },
   commit: {
@@ -107,9 +107,20 @@ export default {
     menuChoices: {
       setKeys: "🔑 تعيين مفاتيح API",
       setPrompt: "📝 تعيين قالب الموجه",
+      setAsciiArt: "🎨 تعيين شخصية ASCII Art",
       changeLanguage: "🌐 تغيير اللغة",
       show: "📋 عرض التكوين الحالي",
       exit: "❌ خروج",
+    },
+    ascii: {
+      select: "اختر شخصية الشعار:",
+      choices: {
+          psyduck: "Psyduck",
+          totoro: "Totoro",
+          cat: "Cat",
+          none: "بلا (None)"
+      },
+      saved: "✅ تم حفظ شخصية ASCII Art!",
     },
     keys: {
       enterApiKey: "أدخل مفتاح API (مطلوب):",
@@ -140,6 +151,7 @@ export default {
       baseUrlLabel: "العنوان الأساسي:",
       modelLabel: "النموذج:",
       configFileLabel: "ملف التكوين:",
+      asciiArtLabel: "ASCII Art:",
     },
     help: {
       title: "🌐 تكوين اللغة:",

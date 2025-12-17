@@ -65,8 +65,8 @@ export default {
     summary: "合計 {total} ファイル変更, +{adds} -{dels} 行 (主要な {shown} 変更を表示)",
   },
   auth: {
-    getting: "🔑 認証情報を取得中...",
-    success: "✅ 認証成功",
+    getting: "🔑 設定を確認中...",
+    success: "✅ 設定確認完了",
     setupRequired: "❌ APIキーが設定されていません。'ai-commit config'を実行して設定するか、環境変数 AI_COMMIT_API_KEY を使用してください。",
   },
   commit: {
@@ -107,9 +107,20 @@ export default {
     menuChoices: {
       setKeys: "🔑 API設定 (OpenAI形式)",
       setPrompt: "📝 プロンプトテンプレート設定",
+      setAsciiArt: "🎨 ASCIIアートキャラクター設定",
       changeLanguage: "🌐 言語変更",
       show: "📋 現在の設定を表示",
       exit: "❌ 終了",
+    },
+    ascii: {
+      select: "バナーキャラクターを選択してください:",
+      choices: {
+          psyduck: "コダック (Psyduck)",
+          totoro: "トトロ (Totoro)",
+          cat: "猫 (Cat)",
+          none: "なし (None)"
+      },
+      saved: "✅ ASCIIアートキャラクターを保存しました！",
     },
     keys: {
       enterApiKey: "APIキーを入力 (必須):",
@@ -140,6 +151,7 @@ export default {
       baseUrlLabel: "Base URL:",
       modelLabel: "モデル:",
       configFileLabel: "設定ファイル:",
+      asciiArtLabel: "ASCIIアート:",
     },
     help: {
       title: "🌐 言語設定:",

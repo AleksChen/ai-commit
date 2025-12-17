@@ -65,8 +65,8 @@ export default {
     summary: "총 {total} 파일 변경, +{adds} -{dels} 라인 (주요 변경 {shown}개 표시)",
   },
   auth: {
-    getting: "🔑 인증 확인 중...",
-    success: "✅ 인증 성공",
+    getting: "🔑 설정 확인 중...",
+    success: "✅ 설정 확인 완료",
     setupRequired: "❌ API 키가 설정되지 않았습니다. 'ai-commit config'를 실행하거나 환경 변수 AI_COMMIT_API_KEY를 사용하세요.",
   },
   commit: {
@@ -107,9 +107,20 @@ export default {
     menuChoices: {
       setKeys: "🔑 API 설정 (OpenAI 스타일)",
       setPrompt: "📝 프롬프트 템플릿 설정",
+      setAsciiArt: "🎨 ASCII 아트 캐릭터 설정",
       changeLanguage: "🌐 언어 변경",
       show: "📋 현재 설정 보기",
       exit: "❌ 종료",
+    },
+    ascii: {
+      select: "배너 캐릭터를 선택하세요:",
+      choices: {
+          psyduck: "고라파덕 (Psyduck)",
+          totoro: "토토로 (Totoro)",
+          cat: "고양이 (Cat)",
+          none: "없음 (None)"
+      },
+      saved: "✅ ASCII 아트 캐릭터가 저장되었습니다!",
     },
     keys: {
       enterApiKey: "API 키 입력 (필수):",
@@ -140,6 +151,7 @@ export default {
       baseUrlLabel: "Base URL:",
       modelLabel: "모델:",
       configFileLabel: "설정 파일:",
+      asciiArtLabel: "ASCII 아트:",
     },
     help: {
       title: "🌐 언어 설정:",

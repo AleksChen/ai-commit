@@ -65,8 +65,8 @@ export default {
     summary: "Total {total} archivos cambiados, +{adds} -{dels} líneas (mostrando {shown} cambios principales)",
   },
   auth: {
-    getting: "🔑 Obteniendo autenticación...",
-    success: "✅ Autenticación exitosa",
+    getting: "🔑 Verificando configuración...",
+    success: "✅ Configuración verificada",
     setupRequired: "❌ Clave API no configurada. Ejecute 'ai-commit config' o use la variable de entorno AI_COMMIT_API_KEY.",
   },
   commit: {
@@ -107,9 +107,20 @@ export default {
     menuChoices: {
       setKeys: "🔑 Configurar API (Estilo OpenAI)",
       setPrompt: "📝 Configurar Plantilla de Prompt",
+      setAsciiArt: "🎨 Configurar Personaje ASCII Art",
       changeLanguage: "🌐 Cambiar Idioma",
       show: "📋 Mostrar Configuración Actual",
       exit: "❌ Salir",
+    },
+    ascii: {
+      select: "Seleccione un personaje para el banner:",
+      choices: {
+          psyduck: "Psyduck",
+          totoro: "Totoro",
+          cat: "Gato (Cat)",
+          none: "Ninguno (None)"
+      },
+      saved: "✅ ¡Personaje ASCII Art guardado!",
     },
     keys: {
       enterApiKey: "Ingrese Clave API (Requerido):",
@@ -140,6 +151,7 @@ export default {
       baseUrlLabel: "URL Base:",
       modelLabel: "Modelo:",
       configFileLabel: "Archivo Config:",
+      asciiArtLabel: "ASCII Art:",
     },
     help: {
       title: "🌐 Configuración de Idioma:",

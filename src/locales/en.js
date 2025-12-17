@@ -65,8 +65,8 @@ export default {
     summary: "Total {total} files changed, +{adds} -{dels} lines (showing first {shown} major changes)",
   },
   auth: {
-    getting: "🔑 Getting authentication...",
-    success: "✅ Authentication successful",
+    getting: "🔑 Verifying configuration...",
+    success: "✅ Configuration verified",
     setupRequired: "❌ API Key not configured. Please run 'ai-commit config' to set up, or use environment variable AI_COMMIT_API_KEY.",
   },
   commit: {
@@ -104,9 +104,20 @@ export default {
     menuChoices: {
       setKeys: "🔑 Set API Params (OpenAI Style)",
       setPrompt: "📝 Set Prompt Template",
+      setAsciiArt: "🎨 Set ASCII Art Character",
       changeLanguage: "🌐 Change Language",
       show: "📋 Show Current Config",
       exit: "❌ Exit",
+    },
+    ascii: {
+      select: "Select a banner character:",
+      choices: {
+          psyduck: "Psyduck",
+          totoro: "Totoro",
+          cat: "Cat",
+          none: "None"
+      },
+      saved: "✅ ASCII Art character saved!",
     },
     keys: {
       enterApiKey: "Enter API Key (Required):",
@@ -137,6 +148,7 @@ export default {
       baseUrlLabel: "Base URL:",
       modelLabel: "Model:",
       configFileLabel: "Config File:",
+      asciiArtLabel: "ASCII Art:",
     },
     help: {
       title: "🌐 Language Configuration:",

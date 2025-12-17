@@ -65,8 +65,8 @@ export default {
     summary: "共 {total} 个文件变更，新增 {adds} 行，删除 {dels} 行（显示前 {shown} 个主要变更）",
   },
   auth: {
-    getting: "🔑 获取认证信息...",
-    success: "✅ 认证信息获取成功",
+    getting: "🔑 验证配置信息...",
+    success: "✅ 配置验证通过",
     setupRequired: "❌ 未配置 API Key。请运行 'ai-commit config' 进行配置，或设置环境变量 AI_COMMIT_API_KEY。",
   },
   commit: {
@@ -104,9 +104,20 @@ export default {
     menuChoices: {
       setKeys: "🔑 设置 API 参数 (OpenAI 格式)",
       setPrompt: "📝 设置 Prompt 模板",
+      setAsciiArt: "🎨 设置 ASCII Art 角色",
       changeLanguage: "🌐 更改语言",
       show: "📋 查看当前配置",
       exit: "❌ 退出",
+    },
+    ascii: {
+      select: "请选择 Banner 角色：",
+      choices: {
+          psyduck: "可达鸭",
+          totoro: "龙猫",
+          cat: "猫",
+          none: "关闭"
+      },
+      saved: "✅ ASCII Art 角色已保存！",
     },
     keys: {
       enterApiKey: "请输入 API Key (必填)：",
@@ -137,6 +148,7 @@ export default {
       baseUrlLabel: "Base URL：",
       modelLabel: "Model：",
       configFileLabel: "配置文件：",
+      asciiArtLabel: "ASCII Art：",
     },
     help: {
       title: "🌐 语言配置：",

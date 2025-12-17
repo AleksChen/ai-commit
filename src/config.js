@@ -31,6 +31,7 @@ export async function handleConfigCommand() {
       choices: [
         { name: i18n.t('config.menuChoices.setKeys'), value: 'setKeys' },
         { name: i18n.t('config.menuChoices.setPrompt'), value: 'setPrompt' },
+        { name: i18n.t('config.menuChoices.setAsciiArt'), value: 'setAsciiArt' },
         { name: i18n.t('config.menuChoices.changeLanguage'), value: 'language' },
         { name: i18n.t('config.menuChoices.show'), value: 'show' },
         { name: i18n.t('config.menuChoices.exit'), value: 'exit' }
@@ -44,6 +45,9 @@ export async function handleConfigCommand() {
       break;
     case 'setPrompt':
       await setPromptTemplate();
+      break;
+    case 'setAsciiArt':
+      await setAsciiArt();
       break;
     case 'language':
       await changeLanguage();
@@ -130,6 +134,29 @@ async function setPromptTemplate() {
     }
 }
 
+async function setAsciiArt() {
+  const { asciiArt } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'asciiArt',
+      message: i18n.t('config.ascii.select'),
+      choices: [
+        { name: i18n.t('config.ascii.choices.psyduck'), value: 'psyduck' },
+        { name: i18n.t('config.ascii.choices.totoro'), value: 'totoro' },
+        { name: i18n.t('config.ascii.choices.cat'), value: 'cat' },
+        { name: i18n.t('config.ascii.choices.none'), value: 'none' },
+      ],
+      default: i18n.getConfig('asciiArt') || 'psyduck',
+    }
+  ]);
+
+  if (i18n.setConfig('asciiArt', asciiArt)) {
+    console.log(chalk.green(i18n.t('config.ascii.saved')));
+  } else {
+    console.log(chalk.red(i18n.t('config.configFailed')));
+  }
+}
+
 async function changeLanguage() {
   const { newLanguage } = await inquirer.prompt([
     {
@@ -170,6 +197,7 @@ function showCurrentConfig() {
   const baseUrl = i18n.getConfig('baseUrl') || `https://api.openai.com/v1 ${i18n.t('common.default')}`;
   const model = i18n.getConfig('model') || `gpt-3.5-turbo ${i18n.t('common.default')}`;
   const promptType = i18n.getConfig('promptType') || 'default';
+  const asciiArt = i18n.getConfig('asciiArt') || `none ${i18n.t('common.default')}`;
 
   const maskedKey = apiKey ? apiKey.slice(0, 4) + '****' + apiKey.slice(-4) : i18n.t('common.notSet');
 
@@ -177,6 +205,7 @@ function showCurrentConfig() {
   console.log(chalk.blue(i18n.t('config.view.baseUrlLabel')), baseUrl);
   console.log(chalk.blue(i18n.t('config.view.modelLabel')), model);
   console.log(chalk.blue(i18n.t('common.promptStyle')), promptType);
+  console.log(chalk.blue(i18n.t('config.view.asciiArtLabel')), asciiArt);
 
   console.log(chalk.blue(i18n.t('config.view.configFileLabel')), i18n.CONFIG_FILE || '~/.ai-commit-config.json');
   console.log(chalk.gray('─'.repeat(40)));

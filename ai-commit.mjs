@@ -12,17 +12,15 @@ import { onExit } from "signal-exit";
 import axios from "axios";
 import updateNotifier from "update-notifier";
 import i18n from "./src/i18n.js";
+import { ASCII_ARTS } from "./src/ascii.js";
 
 process.on("SIGINT", () => {
-  console.log(
-    "\n" +
-      chalk.yellow(i18n.t("commit.operationCancelled"))
-  );
+  console.log("\n" + chalk.yellow(i18n.t("commit.operationCancelled")));
   process.exit(0);
 });
 import { handleConfigCommand, setApiKeys } from "./src/config.js";
 import { recordUsage, showStats } from "./src/cost_stats.js";
-import { buildPrompt, assembleCommitText, compressDiff, parseOptions } from "./src/utils.js";
+import { buildPrompt, compressDiff, parseOptions } from "./src/utils.js";
 
 const pkg = JSON.parse(
   fs.readFileSync(new URL("./package.json", import.meta.url), "utf8")
@@ -99,9 +97,7 @@ async function checkAndStageFiles() {
   }
 
   // 3. Ask to stage all
-  console.log(
-    chalk.yellow(i18n.t("git.stagedEmpty"))
-  );
+  console.log(chalk.yellow(i18n.t("git.stagedEmpty")));
 
   // Check if auto-stage is enabled via env var
   const autoStageEnv = process.env.AI_COMMIT_AUTO_STAGE;
@@ -215,7 +211,7 @@ async function callAI(messages, { apiKey, baseUrl, model }) {
 async function generateWithSelection(prompt, auth, options, isRegen = false) {
   const spinnerLabel = isRegen ? "ai.regenerating" : "ai.generating";
   const successLabel = isRegen ? "ai.regenerated" : "ai.generated";
-  
+
   const spinner = ora(i18n.t(spinnerLabel)).start();
   const startTime = Date.now();
 
@@ -228,67 +224,102 @@ async function generateWithSelection(prompt, auth, options, isRegen = false) {
     spinner.succeed(i18n.t(successLabel, { duration }));
 
     if (tokens.total > 0) {
-       if (!options.quiet) {
-          console.log(chalk.gray(i18n.t("ai.tokens", {
+      if (!options.quiet) {
+        console.log(
+          chalk.gray(
+            i18n.t("ai.tokens", {
               prompt: tokens.prompt,
               completion: tokens.completion,
-              total: tokens.total
-          })));
-       }
-       recordUsage({
-           model: auth.model,
-           duration: parseFloat(duration),
-           tokens
-       });
+              total: tokens.total,
+            })
+          )
+        );
+      }
+      recordUsage({
+        model: auth.model,
+        duration: parseFloat(duration),
+        tokens,
+      });
     }
 
     const choices = parseOptions(content);
     if (!choices || choices.length === 0) {
-        throw new Error(i18n.t("ai.noMessage"));
+      throw new Error(i18n.t("ai.noMessage"));
     }
 
     if (options.write || options.print || choices.length === 1) {
-        return choices[0];
+      return choices[0];
     }
 
     // Display options
     console.log("");
     choices.forEach((c, i) => {
-        console.log(chalk.yellow(`Option ${i + 1}:`));
-        console.log(chalk.gray("----------------------------------------"));
-        console.log(c);
-        console.log(chalk.gray("----------------------------------------\n"));
+      console.log(chalk.yellow(`Option ${i + 1}:`));
+      console.log(chalk.gray("----------------------------------------"));
+      console.log(c);
+      console.log(chalk.gray("----------------------------------------\n"));
     });
 
     const { selectedIndex } = await inquirer.prompt([
-        {
-            type: "list",
-            name: "selectedIndex",
-            message: i18n.t("commit.selectOption"),
-            choices: choices.map((c, i) => ({
-                name: `Option ${i + 1}: ${c.split('\n')[0].substring(0, 50)}...`,
-                value: i
-            }))
-        }
+      {
+        type: "list",
+        name: "selectedIndex",
+        message: i18n.t("commit.selectOption"),
+        choices: choices.map((c, i) => ({
+          name: `Option ${i + 1}: ${c.split("\n")[0].substring(0, 50)}...`,
+          value: i,
+        })),
+      },
     ]);
     return choices[selectedIndex];
-
   } catch (error) {
-      spinner.fail(i18n.t(isRegen ? "ai.regenerationFailed" : "ai.generationFailed"));
-      throw error;
+    spinner.fail(
+      i18n.t(isRegen ? "ai.regenerationFailed" : "ai.generationFailed")
+    );
+    throw error;
   }
 }
 
-// Main command logic
 async function runMain(options, hintParts) {
-  // Banner
   if (!options.quiet) {
-    console.log(
-      "\n" +
-        chalk.cyan.bold(
-          figlet.textSync(i18n.t("banner.title"), { font: "Standard" })
-        )
-    );
+    const asciiArtKey = i18n.getConfig("asciiArt") || "none";
+
+    const titleLines = figlet
+      .textSync(i18n.t("banner.title"), { font: "Standard" })
+      .split("\n");
+    let artPrinted = false;
+
+    if (asciiArtKey !== "none") {
+      const artContent = ASCII_ARTS[asciiArtKey] || ASCII_ARTS["psyduck"];
+      const duckLines = artContent.split("\n").filter((l) => l.length > 0);
+      const titleWidth = Math.max(...titleLines.map((l) => l.length));
+      const duckWidth = Math.max(...duckLines.map((l) => l.length));
+      const terminalWidth = process.stdout.columns || 80;
+
+      if (titleWidth + 4 + duckWidth <= terminalWidth) {
+        const maxLines = Math.max(titleLines.length, duckLines.length);
+        const titleStartLine = Math.floor((maxLines - titleLines.length) / 2);
+
+        const combined = [];
+        for (let i = 0; i < maxLines; i++) {
+          const titleLine =
+            i >= titleStartLine && i < titleStartLine + titleLines.length
+              ? titleLines[i - titleStartLine]
+              : "";
+          const duckLine = duckLines[i] || "";
+          combined.push(
+            chalk.hex("#FFD866").bold(titleLine.padEnd(titleWidth + 4)) +
+              chalk.yellow(duckLine)
+          );
+        }
+        console.log("\n" + combined.join("\n"));
+        artPrinted = true;
+      }
+    }
+
+    if (!artPrinted) {
+      console.log("\n" + chalk.cyan.bold(titleLines.join("\n")));
+    }
     console.log(chalk.gray(i18n.t("banner.subtitle")));
   }
 
@@ -517,10 +548,7 @@ program
         e.message.includes("User force closed") ||
         e.name === "ExitPromptError"
       ) {
-        console.log(
-          "\n" +
-            chalk.yellow(i18n.t("commit.operationCancelled"))
-        );
+        console.log("\n" + chalk.yellow(i18n.t("commit.operationCancelled")));
         process.exit(0);
       }
       console.error(chalk.red(i18n.t("common.fatalError")), e.message);
@@ -537,10 +565,7 @@ program
         e.message.includes("User force closed") ||
         e.name === "ExitPromptError"
       ) {
-        console.log(
-          "\n" +
-            chalk.yellow(i18n.t("commit.operationCancelled"))
-        );
+        console.log("\n" + chalk.yellow(i18n.t("commit.operationCancelled")));
         process.exit(0);
       }
       console.error(chalk.red(i18n.t("common.configError")), e.message);
