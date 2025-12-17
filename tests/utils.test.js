@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { assembleCommitText, buildPrompt, compressDiff } from '../src/utils.js';
+import { assembleCommitText, buildPrompt, compressDiff, parseOptions } from '../src/utils.js';
 import i18n from '../src/i18n.js';
 
 describe('utils', () => {
@@ -80,5 +80,58 @@ index 123..000
           i18n.currentLanguage = originalLang;
       });
   });
-});
 
+  describe('parseOptions', () => {
+    it('should parse standard ---OPTION--- separator', () => {
+      const text = `feat: option 1
+---OPTION---
+fix: option 2
+---OPTION---
+docs: option 3`;
+      const options = parseOptions(text);
+      expect(options).toHaveLength(3);
+      expect(options[0]).toBe('feat: option 1');
+      expect(options[1]).toBe('fix: option 2');
+      expect(options[2]).toBe('docs: option 3');
+    });
+
+    it('should parse numbered lists', () => {
+      const text = `1. feat: option 1
+2. fix: option 2`;
+      const options = parseOptions(text);
+      expect(options).toHaveLength(2);
+      expect(options[0]).toBe('feat: option 1');
+      expect(options[1]).toBe('fix: option 2');
+    });
+
+    it('should parse Option X format', () => {
+      const text = `Option 1: feat: option 1
+Option 2: fix: option 2`;
+      const options = parseOptions(text);
+      expect(options).toHaveLength(2);
+      expect(options[0]).toBe('feat: option 1');
+      expect(options[1]).toBe('fix: option 2');
+    });
+
+    it('should split by multiple types if other methods fail', () => {
+      const text = `feat: option 1
+fix: option 2`;
+      const options = parseOptions(text);
+      expect(options).toHaveLength(2);
+      expect(options[0]).toBe('feat: option 1');
+      expect(options[1]).toBe('fix: option 2');
+    });
+
+    it('should fallback to single option', () => {
+      const text = `Just a single commit message`;
+      const options = parseOptions(text);
+      expect(options).toHaveLength(1);
+      expect(options[0]).toBe('Just a single commit message');
+    });
+
+    it('should handle empty input', () => {
+      expect(parseOptions('')).toEqual([]);
+      expect(parseOptions(null)).toEqual([]);
+    });
+  });
+});
