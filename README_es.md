@@ -1,8 +1,8 @@
 # AI Commit
 
-Una potente herramienta CLI que genera mensajes de **Conventional Commits** a partir de tus cambios en git utilizando APIs compatibles con OpenAI.
+**[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
-Deja de luchar con los mensajes de commit. Deja que la IA los escriba por ti: concisos, estandarizados y significativos.
+Una potente herramienta CLI que genera mensajes de **Conventional Commits** a partir de tus cambios en git utilizando APIs compatibles con OpenAI. Deja de luchar con los mensajes de commit. Deja que la IA los escriba por ti: concisos, estandarizados y significativos. **🔒 Absolutamente Seguro | 🛡️ Privacidad Primero | 🆓 100% Gratis y Código Abierto**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
 ![Version](https://img.shields.io/npm/v/@alekschen/ai-commit)
@@ -10,6 +10,7 @@ Deja de luchar con los mensajes de commit. Deja que la IA los escriba por ti: co
 
 ## Características
 
+- 🔒 **Privacidad Primero**: Tu código se envía directamente a tu proveedor de API configurado. Sin servidores intermedios, sin rastreo. **100% Código Abierto**: audítalo tú mismo. La configuración se almacena localmente, garantizando una seguridad absoluta sin puertas traseras.
 - 🤖 **Generación impulsada por IA**: Analiza tu `git diff` para generar mensajes de commit precisos y descriptivos.
 - 📏 **Conventional Commits**: Sigue el formato estándar (feat, fix, chore, etc.) desde el primer momento.
 - 🌍 **Soporte Multilingüe**: Completamente localizado en **Inglés**, **Chino**, **Japonés**, **Coreano**, **Español** y **Árabe**.
@@ -20,11 +21,19 @@ Deja de luchar con los mensajes de commit. Deja que la IA los escriba por ti: co
 
 ## Instalación
 
-Asegúrate de tener Node.js (>= 16.0.0) instalado.
+Asegúrate de tener Node.js (>= 18.0.0) instalado.
 
 ```bash
 # Instalar globalmente vía npm
 npm install -g @alekschen/ai-commit
+```
+
+## Actualización
+
+Esta herramienta verifica automáticamente las actualizaciones y te notificará si hay una nueva versión disponible. Para actualizar manualmente:
+
+```bash
+npm install -g @alekschen/ai-commit@latest
 ```
 
 ## Inicio Rápido
@@ -36,6 +45,8 @@ npm install -g @alekschen/ai-commit
     ai-commit config
     ```
 
+    ![How to Set](assets/how-to-set.gif)
+
 2.  **Generar un Commit**
     Prepara tus cambios (stage) y ejecuta:
 
@@ -45,6 +56,8 @@ npm install -g @alekschen/ai-commit
     ```
 
     O simplemente ejecuta `ai-commit` y deja que prepare los cambios por ti.
+
+    ![How to Use](assets/how-to-use.gif)
 
 3.  **Revisar y Confirmar**
     La herramienta generará un mensaje. Puedes:

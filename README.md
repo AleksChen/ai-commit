@@ -2,9 +2,7 @@
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
-A powerful CLI tool that generates **Conventional Commits** messages from your git changes using OpenAI-compatible APIs.
-
-Stop struggling with commit messages. Let AI write them for you—concise, standardized, and meaningful.
+A powerful CLI tool that generates **Conventional Commits** messages from your git changes using OpenAI-compatible APIs. Stop struggling with commit messages. Let AI write them for you—concise, standardized, and meaningful. **🔒 Absolutely Secure | 🛡️ Privacy First | 🆓 100% Free & Open Source**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
 ![Version](https://img.shields.io/npm/v/@alekschen/ai-commit)
@@ -12,6 +10,7 @@ Stop struggling with commit messages. Let AI write them for you—concise, stand
 
 ## Features
 
+- 🔒 **Privacy First**: Your code is sent directly to your configured API provider. No intermediate servers, no tracking. **100% Open Source**—audit it yourself. Configuration is stored locally, ensuring absolute security with no backdoors.
 - 🤖 **AI-Powered Generation**: Analyzes your `git diff` to generate accurate and descriptive commit messages.
 - 📏 **Conventional Commits**: Follows the standard format (feat, fix, chore, etc.) out of the box.
 - 🌍 **Multi-Language Support**: Fully localized in **English**, **Chinese**, **Japanese**, **Korean**, **Spanish**, and **Arabic**.
@@ -22,7 +21,7 @@ Stop struggling with commit messages. Let AI write them for you—concise, stand
 
 ## Installation
 
-Ensure you have Node.js (>= 16.0.0) installed.
+Ensure you have Node.js (>= 18.0.0) installed.
 
 ```bash
 # Install globally via npm
@@ -46,6 +45,8 @@ npm install -g @alekschen/ai-commit@latest
     ai-commit config
     ```
 
+    ![How to Set](assets/how-to-set.gif)
+
 2.  **Generate a Commit**
     Stage your changes and run:
 
@@ -55,6 +56,8 @@ npm install -g @alekschen/ai-commit@latest
     ```
 
     Or simply run `ai-commit` and let it stage changes for you.
+
+    ![How to Use](assets/how-to-use.gif)
 
 3.  **Review & Commit**
     The tool will generate a message. You can:

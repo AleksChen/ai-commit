@@ -1,8 +1,8 @@
 # AI Commit
 
-OpenAI互換APIを使用して、gitの変更から**Conventional Commits**メッセージを生成する強力なCLIツールです。
+**[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
-コミットメッセージに悩むのはもうやめましょう。簡潔で、標準化された、意味のあるメッセージをAIに書いてもらいましょう。
+OpenAI互換APIを使用して、gitの変更から**Conventional Commits**メッセージを生成する強力なCLIツールです。コミットメッセージに悩むのはもうやめましょう。簡潔で、標準化された、意味のあるメッセージをAIに書いてもらいましょう。**🔒 絶対安全 | 🛡️ プライバシー優先 | 🆓 100% 無料・オープンソース**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
 ![Version](https://img.shields.io/npm/v/@alekschen/ai-commit)
@@ -10,6 +10,7 @@ OpenAI互換APIを使用して、gitの変更から**Conventional Commits**メ�
 
 ## 特徴
 
+- 🔒 **プライバシー優先**: コードは設定されたAPIプロバイダーに直接送信されます。中間サーバーや追跡はありません。**完全オープンソース**なので、監査も可能です。設定はローカルに保存され、バックドアのない絶対的なセキュリティを保証します。
 - 🤖 **AIによる生成**: `git diff`を分析し、正確で説明的なコミットメッセージを生成します。
 - 📏 **Conventional Commits**: 標準フォーマット（feat, fix, choreなど）に即座に対応します。
 - 🌍 **多言語サポート**: **英語**、**中国語**、**日本語**、**韓国語**、**スペイン語**、**アラビア語**に完全対応。
@@ -20,11 +21,19 @@ OpenAI互換APIを使用して、gitの変更から**Conventional Commits**メ�
 
 ## インストール
 
-Node.js (>= 16.0.0) がインストールされていることを確認してください。
+Node.js (>= 18.0.0) がインストールされていることを確認してください。
 
 ```bash
 # npm経由でグローバルにインストール
 npm install -g @alekschen/ai-commit
+```
+
+## 更新
+
+このツールは自動的に更新をチェックし、新しいバージョンが利用可能な場合に通知します。手動で更新するには：
+
+```bash
+npm install -g @alekschen/ai-commit@latest
 ```
 
 ## クイックスタート
@@ -36,6 +45,8 @@ npm install -g @alekschen/ai-commit
     ai-commit config
     ```
 
+    ![How to Set](assets/how-to-set.gif)
+
 2.  **コミットの生成**
     変更をステージングして実行します:
 
@@ -45,6 +56,8 @@ npm install -g @alekschen/ai-commit
     ```
 
     または単に `ai-commit` を実行して、変更を自動的にステージングさせることもできます。
+
+    ![How to Use](assets/how-to-use.gif)
 
 3.  **レビューとコミット**
     ツールがメッセージを生成します。以下の操作が可能です:
