@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/AleksChen/ai-commit/compare/v1.2.0...v1.3.0) (2026-02-27)
+
+
+### Features
+
+* add doctor command and adaptive diff compression ([5eb393e](https://github.com/AleksChen/ai-commit/commit/5eb393ee2d12e1518e943eb4052047c57519a7df))
+
 ### [1.2.1](https://github.com/AleksChen/ai-commit/compare/v1.2.0...v1.2.1) (2025-12-17)
 
 ## [1.2.0](https://github.com/AleksChen/ai-commit/compare/v1.1.0...v1.2.0) (2025-12-17)
