@@ -2,6 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { assembleCommitText, buildPrompt, compressDiff, parseOptions } from '../src/utils.js';
 import i18n from '../src/i18n.js';
 
+function createDiffSection(filePath, oldValue, newValue) {
+  return `diff --git a/${filePath} b/${filePath}
+index 111..222 100644
+--- a/${filePath}
++++ b/${filePath}
+@@ -1,1 +1,1 @@
+-${oldValue}
++${newValue}`;
+}
+
 describe('utils', () => {
   describe('assembleCommitText', () => {
     it('should clean up code blocks', () => {
@@ -50,6 +60,57 @@ index 123..000
 -content`;
         const result = compressDiff(diff);
         expect(result).toContain('D deleted.txt (+0 -1)');
+    });
+
+    it('uses detail mode for small changes and keeps snippets for all shown files', () => {
+      const diff = [
+        createDiffSection('a.js', 'old-a', 'new-a'),
+        createDiffSection('b.js', 'old-b', 'new-b'),
+        createDiffSection('c.js', 'old-c', 'new-c'),
+      ].join('\n');
+
+      const result = compressDiff(diff, { maxFiles: 3, maxChars: 100000 });
+      expect(result).toContain('M c.js (+1 -1)');
+      expect(result).toContain('new-c');
+    });
+
+    it('uses hybrid mode for medium changes and limits snippets to hotspot files', () => {
+      const sections = [];
+      for (let i = 1; i <= 10; i++) {
+        sections.push(createDiffSection(`m${i}.js`, `old-m${i}`, `new-m${i}`));
+      }
+      const diff = sections.join('\n');
+
+      const result = compressDiff(diff, { maxFiles: 6, maxChars: 100000 });
+      expect(result).toContain('M m6.js (+1 -1)');
+      expect(result).not.toContain('new-m6');
+      expect(result).toContain('new-m1');
+    });
+
+    it('uses overview mode for wide changes and only keeps path-level summaries for most files', () => {
+      const sections = [];
+      for (let i = 1; i <= 25; i++) {
+        sections.push(createDiffSection(`o${i}.js`, `old-o${i}`, `new-o${i}`));
+      }
+      const diff = sections.join('\n');
+
+      const result = compressDiff(diff, { maxFiles: 4, maxChars: 100000 });
+      expect(result).toContain('M o4.js (+1 -1)');
+      expect(result).not.toContain('new-o4');
+      expect(result).toContain('new-o1');
+    });
+
+    it('keeps snippets for critical files even in overview mode', () => {
+      const sections = [];
+      for (let i = 1; i <= 22; i++) {
+        sections.push(createDiffSection(`x${i}.js`, `old-x${i}`, `new-x${i}`));
+      }
+      sections.push(createDiffSection('package.json', '"v1"', '"v2"'));
+      const diff = sections.join('\n');
+
+      const result = compressDiff(diff, { maxFiles: 30, maxChars: 100000 });
+      expect(result).toContain('M package.json (+1 -1)');
+      expect(result).toContain('"v2"');
     });
   });
   

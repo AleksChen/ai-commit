@@ -254,6 +254,149 @@ export function assembleCommitText(aiText) {
   return text;
 }
 
+const COMPRESSION_THRESHOLDS = {
+  detailMaxFiles: 5,
+  detailMaxLines: 200,
+  hybridMaxFiles: 20,
+  hybridMaxLines: 1500,
+};
+
+const CRITICAL_PATH_PATTERNS = [
+  /(^|\/)package\.json$/i,
+  /(^|\/)package-lock\.json$/i,
+  /(^|\/)yarn\.lock$/i,
+  /(^|\/)pnpm-lock\.ya?ml$/i,
+  /(^|\/)go\.mod$/i,
+  /(^|\/)go\.sum$/i,
+  /(^|\/)cargo\.toml$/i,
+  /(^|\/)cargo\.lock$/i,
+  /(^|\/)pyproject\.toml$/i,
+  /(^|\/)requirements\.txt$/i,
+  /(^|\/)dockerfile$/i,
+  /(^|\/)\.github\/workflows\//i,
+  /schema/i,
+  /migrations?/i,
+];
+
+function parseSectionMeta(section, id) {
+  const lines = section.split("\n");
+  const header = lines[0] || "";
+  const aPath = header.match(/ a\/([^ ]+)/)?.[1];
+  const bPath = header.match(/ b\/([^ ]+)/)?.[1] || aPath;
+
+  let changeType = "M";
+  if (lines.some((line) => line.startsWith("new file mode"))) changeType = "A";
+  else if (lines.some((line) => line.startsWith("deleted file mode")))
+    changeType = "D";
+  else if (lines.some((line) => line.startsWith("rename from ")))
+    changeType = "R";
+
+  let adds = 0;
+  let dels = 0;
+  for (const line of lines) {
+    if (line.startsWith("+++") || line.startsWith("---")) continue;
+    if (line.startsWith("+")) adds++;
+    else if (line.startsWith("-")) dels++;
+  }
+
+  return {
+    id,
+    section,
+    lines,
+    aPath,
+    bPath,
+    changeType,
+    adds,
+    dels,
+    total: adds + dels,
+  };
+}
+
+function getCompressionMode(totalFiles, totalChangedLines) {
+  if (
+    totalFiles <= COMPRESSION_THRESHOLDS.detailMaxFiles &&
+    totalChangedLines <= COMPRESSION_THRESHOLDS.detailMaxLines
+  ) {
+    return "detail";
+  }
+  if (
+    totalFiles <= COMPRESSION_THRESHOLDS.hybridMaxFiles &&
+    totalChangedLines <= COMPRESSION_THRESHOLDS.hybridMaxLines
+  ) {
+    return "hybrid";
+  }
+  return "overview";
+}
+
+function getModeConfig(mode, maxLinesPerFile) {
+  if (mode === "detail") {
+    return {
+      snippetHotspotLimit: Number.POSITIVE_INFINITY,
+      snippetLineLimit: maxLinesPerFile,
+      includeCriticalPathSnippets: false,
+    };
+  }
+  if (mode === "hybrid") {
+    return {
+      snippetHotspotLimit: 5,
+      snippetLineLimit: Math.min(maxLinesPerFile, 10),
+      includeCriticalPathSnippets: true,
+    };
+  }
+  return {
+    snippetHotspotLimit: 3,
+    snippetLineLimit: Math.min(maxLinesPerFile, 3),
+    includeCriticalPathSnippets: true,
+  };
+}
+
+function isCriticalPath(filePath = "") {
+  return CRITICAL_PATH_PATTERNS.some((pattern) => pattern.test(filePath));
+}
+
+function collectSnippets(lines, maxLinesPerFile) {
+  if (maxLinesPerFile <= 0) return [];
+
+  const snippets = [];
+  let collected = 0;
+
+  for (const line of lines) {
+    if (
+      line.startsWith("+++") ||
+      line.startsWith("---") ||
+      line.startsWith("diff --git ") ||
+      line.startsWith("index ") ||
+      line.startsWith("new file") ||
+      line.startsWith("deleted file") ||
+      line.startsWith("similarity index") ||
+      line.startsWith("rename ")
+    ) {
+      continue;
+    }
+
+    if (line.startsWith("@@")) {
+      if (collected < maxLinesPerFile) {
+        snippets.push(line);
+      }
+      continue;
+    }
+
+    if (line.startsWith("+") || line.startsWith("-")) {
+      const content = line.slice(1);
+      if (content.trim()) {
+        snippets.push(line);
+        collected++;
+        if (collected >= maxLinesPerFile) {
+          snippets.push("...");
+          break;
+        }
+      }
+    }
+  }
+
+  return snippets;
+}
+
 export function compressDiff(
   diff,
   {
@@ -265,102 +408,53 @@ export function compressDiff(
 ) {
   if (!diff) return "";
 
-  // Split diff by file
-  const sections = diff.split(/\n(?=diff --git )/g);
+  const sections = diff
+    .split(/\n(?=diff --git )/g)
+    .filter((section) => section.trim() && section.startsWith("diff --git "));
+
+  if (sections.length === 0) return "";
+
+  const parsedSections = sections.map((section, index) =>
+    parseSectionMeta(section, index)
+  );
+  const totalAdds = parsedSections.reduce((sum, section) => sum + section.adds, 0);
+  const totalDels = parsedSections.reduce((sum, section) => sum + section.dels, 0);
+  const totalChangedLines = totalAdds + totalDels;
+  const mode = getCompressionMode(parsedSections.length, totalChangedLines);
+  const modeConfig = getModeConfig(mode, maxLinesPerFile);
+
+  const sortedSections = [...parsedSections].sort((a, b) => b.total - a.total);
+  const hotspotIds = new Set(
+    sortedSections
+      .slice(
+        0,
+        Math.min(modeConfig.snippetHotspotLimit, sortedSections.length)
+      )
+      .map((section) => section.id)
+  );
+
   const summaries = [];
-  let totalAdds = 0;
-  let totalDels = 0;
   let fileCount = 0;
   let currentChars = 0;
 
-  // Sort by change size, prioritize important changes
-  const sortedSections = sections
-    .filter((sec) => sec.trim() && sec.startsWith("diff --git "))
-    .map((sec) => {
-      const lines = sec.split("\n");
-      let adds = 0,
-        dels = 0;
-      for (const l of lines) {
-        if (l.startsWith("+") && !l.startsWith("+++")) adds++;
-        else if (l.startsWith("-") && !l.startsWith("---")) dels++;
-      }
-      return { section: sec, adds, dels, total: adds + dels };
-    })
-    .sort((a, b) => b.total - a.total); // Sort descending by change amount
-
-  for (const { section } of sortedSections) {
+  for (const section of sortedSections) {
     if (fileCount >= maxFiles) break;
 
-    const lines = section.split("\n");
-    const header = lines[0];
-    const aPath = header.match(/ a\/([^ ]+)/)?.[1];
-    const bPath = header.match(/ b\/([^ ]+)/)?.[1] || aPath;
+    const path = section.bPath || section.aPath || "unknown";
+    const shouldIncludeSnippets =
+      includeAddedSnippets &&
+      (mode === "detail" ||
+        hotspotIds.has(section.id) ||
+        (modeConfig.includeCriticalPathSnippets && isCriticalPath(path)));
 
-    // Simplified change type detection
-    let changeType = "M";
-    if (lines.some((l) => l.startsWith("new file mode"))) changeType = "A";
-    else if (lines.some((l) => l.startsWith("deleted file mode")))
-      changeType = "D";
-    else if (lines.some((l) => l.startsWith("rename from "))) changeType = "R";
-
-    let adds = 0;
-    let dels = 0;
-    const snippets = [];
-
-    // Count changed lines
-    for (const l of lines) {
-      if (l.startsWith("+++") || l.startsWith("---")) continue;
-      if (l.startsWith("+")) adds++;
-      else if (l.startsWith("-")) dels++;
+    let snippets = [];
+    if (shouldIncludeSnippets && (section.adds > 0 || section.dels > 0)) {
+      snippets = collectSnippets(section.lines, modeConfig.snippetLineLimit);
     }
 
-    totalAdds += adds;
-    totalDels += dels;
-
-    // Intelligent snippet extraction
-    if (includeAddedSnippets && (adds > 0 || dels > 0)) {
-      let collected = 0;
-
-      for (const l of lines) {
-        // Skip file headers and meta info
-        if (
-          l.startsWith("+++") ||
-          l.startsWith("---") ||
-          l.startsWith("diff --git ") ||
-          l.startsWith("index ") ||
-          l.startsWith("new file") ||
-          l.startsWith("deleted file") ||
-          l.startsWith("similarity index") ||
-          l.startsWith("rename ")
-        )
-          continue;
-
-        // Keep Hunk headers for context
-        if (l.startsWith("@@")) {
-          if (collected < maxLinesPerFile) {
-            snippets.push(l);
-          }
-          continue;
-        }
-
-        // Collect both added and deleted lines for better context
-        if (l.startsWith("+") || l.startsWith("-")) {
-          const content = l.slice(1);
-          // Only skip completely empty lines, KEEP comments for documentation updates
-          if (content.trim()) {
-            snippets.push(l);
-            collected++;
-            if (collected >= maxLinesPerFile) {
-              snippets.push("...");
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    const fileLine = `${changeType} ${bPath} (+${adds} -${dels})`;
-    const fileSummary = [fileLine, ...snippets].join("\n");
+    const fileLine = `${section.changeType} ${path} (+${section.adds} -${section.dels})`;
+    const fileSummary =
+      snippets.length > 0 ? [fileLine, ...snippets].join("\n") : fileLine;
 
     // Check char limit
     if (currentChars + fileSummary.length > maxChars) {
@@ -373,16 +467,16 @@ export function compressDiff(
   }
 
   // Add omission info if too many files
-  if (sections.length > fileCount) {
+  if (parsedSections.length > fileCount) {
     summaries.push(
       `... ${i18n.t("compression.moreFiles", {
-        count: sections.length - fileCount,
+        count: parsedSections.length - fileCount,
       })}`
     );
   }
 
   const head = i18n.t("compression.summary", {
-    total: sections.length,
+    total: parsedSections.length,
     adds: totalAdds,
     dels: totalDels,
     shown: fileCount,

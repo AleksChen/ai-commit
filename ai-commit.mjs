@@ -13,6 +13,9 @@ import axios from "axios";
 import updateNotifier from "update-notifier";
 import i18n from "./src/i18n.js";
 import { ASCII_ARTS } from "./src/ascii.js";
+import { lintAndFixCommitMessage } from "./src/commitlint.js";
+import { classifyError, formatClassifiedError } from "./src/error_utils.js";
+import { runDoctorCommand } from "./src/doctor.js";
 
 process.on("SIGINT", () => {
   console.log("\n" + chalk.yellow(i18n.t("commit.operationCancelled")));
@@ -197,15 +200,26 @@ async function callAI(messages, { apiKey, baseUrl, model }) {
     };
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        `API (${error.response.status}): ${
-          error.response.data?.error?.message ||
+      const apiError = new Error(
+        error.response.data?.error?.message ||
+          error.response.data?.message ||
           JSON.stringify(error.response.data)
-        }`
       );
+      apiError.status = error.response.status;
+      apiError.code = error.response.data?.error?.code || error.code;
+      throw apiError;
     }
     throw error;
   }
+}
+
+function printClassifiedError(error) {
+  const info = classifyError(error);
+  if (info.category === "unknown") {
+    console.error(chalk.red(error?.message || i18n.t("errors.unknownMessage")));
+    return;
+  }
+  console.error(chalk.red(formatClassifiedError(error, i18n.t.bind(i18n))));
 }
 
 async function generateWithSelection(prompt, auth, options, isRegen = false) {
@@ -242,10 +256,47 @@ async function generateWithSelection(prompt, auth, options, isRegen = false) {
       });
     }
 
-    const choices = parseOptions(content);
-    if (!choices || choices.length === 0) {
+    const parsedChoices = parseOptions(content);
+    if (!parsedChoices || parsedChoices.length === 0) {
       throw new Error(i18n.t("ai.noMessage"));
     }
+
+    const lintedChoices = parsedChoices.map((choice) =>
+      lintAndFixCommitMessage(choice)
+    );
+    const validChoices = lintedChoices.filter((choice) => choice.valid);
+
+    const fixedCount = lintedChoices.filter((choice) => choice.wasFixed).length;
+    const droppedCount = lintedChoices.length - validChoices.length;
+
+    if (!options.quiet && fixedCount > 0) {
+      console.log(
+        chalk.yellow(i18n.t("commitlint.autoFixedCount", { count: fixedCount }))
+      );
+    }
+
+    if (!options.quiet && droppedCount > 0) {
+      console.log(
+        chalk.yellow(
+          i18n.t("commitlint.invalidDropped", { count: droppedCount })
+        )
+      );
+    }
+
+    if (validChoices.length === 0) {
+      const errorDetails = lintedChoices
+        .flatMap((choice) => choice.errors)
+        .filter(Boolean)
+        .join(" ");
+      throw new Error(
+        i18n.t("commitlint.noValidOptions") +
+          (errorDetails
+            ? "\n" + i18n.t("commitlint.validationErrors", { errors: errorDetails })
+            : "")
+      );
+    }
+
+    const choices = validChoices.map((choice) => choice.message);
 
     if (options.write || options.print || choices.length === 1) {
       return choices[0];
@@ -388,7 +439,7 @@ async function runMain(options, hintParts) {
   try {
     commitMsg = await generateWithSelection(prompt, auth, options, false);
   } catch (error) {
-    console.error(chalk.red(error.message));
+    printClassifiedError(error);
     process.exit(1);
   }
 
@@ -467,7 +518,28 @@ async function runMain(options, hintParts) {
       process.exit(0);
     }
 
-    if (userChoice === "commit") break;
+    if (userChoice === "commit") {
+      const linted = lintAndFixCommitMessage(commitMsg);
+      if (linted.wasFixed) {
+        commitMsg = linted.message;
+        if (!options.quiet) {
+          console.log(chalk.yellow(i18n.t("commitlint.autoFixedSingle")));
+        }
+      }
+
+      if (!linted.valid) {
+        console.log(chalk.red(i18n.t("commitlint.validationFailed")));
+        console.log(
+          chalk.red(
+            i18n.t("commitlint.validationErrors", {
+              errors: linted.errors.join(" "),
+            })
+          )
+        );
+        continue;
+      }
+      break;
+    }
 
     if (userChoice === "edit") {
       const { newMsg } = await inquirer.prompt([
@@ -480,6 +552,14 @@ async function runMain(options, hintParts) {
         },
       ]);
       commitMsg = newMsg.trim();
+
+      const linted = lintAndFixCommitMessage(commitMsg);
+      if (linted.wasFixed) {
+        commitMsg = linted.message;
+        if (!options.quiet) {
+          console.log(chalk.yellow(i18n.t("commitlint.autoFixedSingle")));
+        }
+      }
     }
 
     if (userChoice === "regenerate") {
@@ -487,7 +567,7 @@ async function runMain(options, hintParts) {
         const newMsg = await generateWithSelection(prompt, auth, options, true);
         if (newMsg) commitMsg = newMsg;
       } catch (e) {
-        console.error(e.message);
+        printClassifiedError(e);
       }
     }
   }
@@ -551,7 +631,7 @@ program
         console.log("\n" + chalk.yellow(i18n.t("commit.operationCancelled")));
         process.exit(0);
       }
-      console.error(chalk.red(i18n.t("common.fatalError")), e.message);
+      printClassifiedError(e);
       process.exit(1);
     });
   });
@@ -578,6 +658,16 @@ program
   .description("Show AI usage statistics")
   .action(() => {
     showStats();
+  });
+
+program
+  .command("doctor")
+  .description("Run health checks for ai-commit")
+  .action(async () => {
+    await runDoctorCommand().catch((e) => {
+      printClassifiedError(e);
+      process.exit(1);
+    });
   });
 
 program.parse();

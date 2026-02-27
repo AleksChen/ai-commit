@@ -13,6 +13,7 @@
 - 🔒 **隐私优先**：你的代码仅直接发送至你配置的 API 提供商。没有中间服务器，不进行追踪。**代码完全开源**，欢迎审计。数据仅在本地存储，绝对安全无后门。
 - 🤖 **AI 驱动生成**：分析你的 `git diff` 生成准确且描述性的提交信息。
 - 📏 **Conventional Commits**：开箱即用地遵循标准格式（feat, fix, chore 等）。
+- 🧹 **Commitlint 自动修复**：提交前会将 AI 输出自动规范为合法 Conventional Commit 格式。
 - 🎯 **多样化选项**：生成多个提交信息版本供你选择。
 - 🌍 **多语言支持**：完全本地化的 **英语**、**中文**、**日语**、**韩语**、**西班牙语** 和 **阿拉伯语** 支持。
 - 🔧 **高度可配置**：支持自定义 OpenAI 兼容 API（DeepSeek, Azure 等）、自定义模型和 Prompt。
@@ -21,6 +22,7 @@
 - 🧠 **智能上下文**：自动压缩大型 diff 以适应 Token 限制，同时保留上下文。
 - 🎨 **趣味字符画**：可自定义的启动 Banner（Psyduck, Totoro, Cat 等）。
 - 🪝 **Git Hook 支持**：可作为 `prepare-commit-msg` 钩子或与其他 Git 工具配合使用。
+- 🩺 **内置 Doctor 诊断**：`ai-commit doctor` 可检查运行环境、Git、配置与 API 连通性。
 
 ## 安装
 
@@ -87,6 +89,9 @@ ai-commit --write .git/COMMIT_EDITMSG
 
 # 运行静默模式（隐藏 Banner/日志）
 ai-commit --quiet
+
+# 运行诊断检查
+ai-commit doctor
 ```
 
 ### 配置
@@ -111,6 +116,14 @@ ai-commit config
 
 ```bash
 ai-commit cost
+```
+
+### 运行健康检查
+
+快速定位常见配置与网络问题：
+
+```bash
+ai-commit doctor
 ```
 
 ## 环境变量

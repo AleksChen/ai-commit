@@ -13,6 +13,7 @@ A powerful CLI tool that generates **Conventional Commits** messages from your g
 - 🔒 **Privacy First**: Your code is sent directly to your configured API provider. No intermediate servers, no tracking. **100% Open Source**—audit it yourself. Configuration is stored locally.
 - 🤖 **AI-Powered Generation**: Analyzes your `git diff` to generate accurate and descriptive commit messages.
 - 📏 **Conventional Commits**: Follows the standard format (feat, fix, chore, etc.) out of the box.
+- 🧹 **Commitlint Auto-Fix**: Automatically normalizes AI output into valid Conventional Commits format before commit.
 - 🎯 **Multiple Options**: Generates multiple commit message variations for you to choose from.
 - 🌍 **Multi-Language Support**: Fully localized in **English**, **Chinese**, **Japanese**, **Korean**, **Spanish**, and **Arabic**.
 - 🔧 **Highly Configurable**: Support for custom OpenAI-compatible APIs (DeepSeek, Azure, etc.), custom models, and prompts.
@@ -21,6 +22,7 @@ A powerful CLI tool that generates **Conventional Commits** messages from your g
 - 🧠 **Smart Context**: Automatically compresses large diffs to fit within token limits while preserving context.
 - 🎨 **Fun ASCII Art**: Customizable startup banner (Psyduck, Totoro, Cat, etc.).
 - 🪝 **Git Hook Support**: Can be used as a `prepare-commit-msg` hook or with other git tools.
+- 🩺 **Built-in Doctor**: `ai-commit doctor` checks your runtime, Git, config, and API connectivity.
 
 ## Installation
 
@@ -87,6 +89,9 @@ ai-commit --write .git/COMMIT_EDITMSG
 
 # Run in quiet mode (suppress banners/logs)
 ai-commit --quiet
+
+# Run diagnostics for config and connectivity
+ai-commit doctor
 ```
 
 ### Configuration
@@ -111,6 +116,14 @@ Check your API usage, token count, and model performance:
 
 ```bash
 ai-commit cost
+```
+
+### Run Health Checks
+
+Quickly diagnose common setup and connectivity issues:
+
+```bash
+ai-commit doctor
 ```
 
 ## Environment Variables
