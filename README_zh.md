@@ -2,7 +2,9 @@
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
-一个强大的 CLI 工具，使用 OpenAI 兼容 API 根据你的 git 变更生成 **Conventional Commits** 提交信息。不再为提交信息发愁。让 AI 为你编写简洁、标准且有意义的提交信息。**🔒 绝对安全 | 🛡️ 隐私优先 | 🆓 100% 免费开源** 
+![Cover](assets/social-preview.png)
+
+一个强大的 CLI 工具，使用 OpenAI 兼容 API 根据你的 git 变更生成 **Conventional Commits** 提交信息。不再为提交信息发愁。让 AI 为你编写简洁、标准且有意义的提交信息。**🔒 绝对安全 | 🛡️ 隐私优先 | 🆓 100% 免费开源**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
 ![Version](https://img.shields.io/npm/v/@alekschen/ai-commit)
@@ -130,18 +132,18 @@ ai-commit doctor
 
 你可以使用环境变量覆盖配置，这对于 CI/CD 流水线非常有用：
 
-| 变量 | 描述 |
-| --- | --- |
-| `AI_COMMIT_API_KEY` | 你的 API Key |
-| `AI_COMMIT_BASE_URL` | 自定义 API Base URL |
-| `AI_COMMIT_MODEL` | 模型名称（如 `gpt-4`, `deepseek-chat`） |
-| `AI_COMMIT_MAX_CHARS` | diff 上下文的最大字符数（默认：200000） |
-| `AI_COMMIT_MAX_FILES` | 最大处理文件数（默认：50） |
-| `AI_COMMIT_MAX_LINES` | 每个文件包含的最大行数（默认：15） |
-| `AI_COMMIT_INCLUDE_SNIPPETS` | 设置为 `0` 以在 Prompt 中禁用代码片段 |
-| `AI_COMMIT_AUTO_STAGE` | 设置为 `1` 自动暂存更改，`0` 如果为空则失败 |
-| `AI_COMMIT_SIGN` | 设置为 `1` 以签名提交 (`git commit -S`) |
-| `AI_COMMIT_AMEND` | 设置为 `1` 以修正提交 (`git commit --amend`) |
+| 变量                         | 描述                                         |
+| ---------------------------- | -------------------------------------------- |
+| `AI_COMMIT_API_KEY`          | 你的 API Key                                 |
+| `AI_COMMIT_BASE_URL`         | 自定义 API Base URL                          |
+| `AI_COMMIT_MODEL`            | 模型名称（如 `gpt-4`, `deepseek-chat`）      |
+| `AI_COMMIT_MAX_CHARS`        | diff 上下文的最大字符数（默认：200000）      |
+| `AI_COMMIT_MAX_FILES`        | 最大处理文件数（默认：50）                   |
+| `AI_COMMIT_MAX_LINES`        | 每个文件包含的最大行数（默认：15）           |
+| `AI_COMMIT_INCLUDE_SNIPPETS` | 设置为 `0` 以在 Prompt 中禁用代码片段        |
+| `AI_COMMIT_AUTO_STAGE`       | 设置为 `1` 自动暂存更改，`0` 如果为空则失败  |
+| `AI_COMMIT_SIGN`             | 设置为 `1` 以签名提交 (`git commit -S`)      |
+| `AI_COMMIT_AMEND`            | 设置为 `1` 以修正提交 (`git commit --amend`) |
 
 ## 贡献
 

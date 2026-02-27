@@ -2,11 +2,29 @@
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
-A powerful CLI tool that generates **Conventional Commits** messages from your git changes using OpenAI-compatible APIs. Stop struggling with commit messages. Let AI write them for you—concise, standardized, and meaningful. **🔒 Absolutely Secure | 🛡️ Privacy First | 🆓 100% Free & Open Source**
+![Cover](assets/social-preview.png)
+
+AI Commit is an **AI commit message CLI** for `git commit` workflows. It reads your `git diff` and generates clean **Conventional Commits** messages using OpenAI-compatible APIs. **🔒 Privacy First | 🛡️ No Middle Server | 🆓 100% Open Source**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
 ![Version](https://img.shields.io/npm/v/@alekschen/ai-commit)
 ![Node](https://img.shields.io/node/v/@alekschen/ai-commit)
+
+## 10-Second Overview
+
+Generate an AI commit message for your staged changes with one command:
+
+```bash
+git add . && npx -y @alekschen/ai-commit
+```
+
+![How to Use](assets/how-to-use.gif)
+
+### Core Scenarios
+
+- **Daily coding speed-up**: Skip manual commit writing and keep each `git commit` clear.
+- **Team commit consistency**: Enforce Conventional Commits format with AI + auto-fix.
+- **Hook/automation integration**: Use `--write` in `prepare-commit-msg` and CI workflows.
 
 ## Features
 

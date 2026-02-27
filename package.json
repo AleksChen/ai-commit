@@ -1,7 +1,7 @@
 {
   "name": "@alekschen/ai-commit",
   "version": "1.3.0",
-  "description": "Generate Conventional Commit messages from git diff using OpenAI compatible APIs",
+  "description": "AI commit message CLI for git commit workflows: generate Conventional Commits from git diff using OpenAI-compatible APIs",
   "type": "module",
   "bin": {
     "ai-commit": "ai-commit.mjs"
@@ -33,11 +33,22 @@
   "keywords": [
     "git",
     "commit",
+    "git-commit",
+    "git-commit-message",
+    "ai-commit-message",
+    "commit-message-generator",
+    "conventional-commit",
     "conventional-commits",
+    "commitlint",
     "openai",
+    "openai-compatible",
     "ai",
     "gpt",
     "cli",
+    "cli-tool",
+    "developer-tools",
+    "git-cli",
+    "git-hooks",
     "git-tools",
     "productivity",
     "automation"

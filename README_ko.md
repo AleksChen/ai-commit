@@ -2,6 +2,8 @@
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
+![Cover](assets/social-preview.png)
+
 OpenAI 호환 API를 사용하여 git 변경 사항에서 **Conventional Commits** 메시지를 생성하는 강력한 CLI 도구입니다. 커밋 메시지로 고민하지 마세요. AI가 간결하고 표준화되었으며 의미 있는 메시지를 작성해 드립니다. **🔒 절대 안전 | 🛡️ 개인정보 보호 우선 | 🆓 100% 무료 및 오픈소스**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
@@ -117,18 +119,18 @@ ai-commit cost
 
 환경 변수를 사용하여 구성을 재정의할 수 있으며, 이는 CI/CD 파이프라인에 유용합니다:
 
-| 변수 | 설명 |
-| --- | --- |
-| `AI_COMMIT_API_KEY` | API Key |
-| `AI_COMMIT_BASE_URL` | 사용자 정의 API Base URL |
-| `AI_COMMIT_MODEL` | 모델 이름 (예: `gpt-4`, `deepseek-chat`) |
-| `AI_COMMIT_MAX_CHARS` | diff 컨텍스트의 최대 문자 수 (기본값: 200000) |
-| `AI_COMMIT_MAX_FILES` | 처리할 최대 파일 수 (기본값: 50) |
-| `AI_COMMIT_MAX_LINES` | 파일당 포함할 최대 줄 수 (기본값: 15) |
-| `AI_COMMIT_INCLUDE_SNIPPETS` | `0`으로 설정하면 프롬프트에서 코드 조각을 비활성화 |
-| `AI_COMMIT_AUTO_STAGE` | `1`로 설정 시 자동 스테이징, `0`일 경우 비어 있으면 실패 |
-| `AI_COMMIT_SIGN` | `1`로 설정 시 커밋 서명 (`git commit -S`) |
-| `AI_COMMIT_AMEND` | `1`로 설정 시 커밋 수정 (`git commit --amend`) |
+| 변수                         | 설명                                                     |
+| ---------------------------- | -------------------------------------------------------- |
+| `AI_COMMIT_API_KEY`          | API Key                                                  |
+| `AI_COMMIT_BASE_URL`         | 사용자 정의 API Base URL                                 |
+| `AI_COMMIT_MODEL`            | 모델 이름 (예: `gpt-4`, `deepseek-chat`)                 |
+| `AI_COMMIT_MAX_CHARS`        | diff 컨텍스트의 최대 문자 수 (기본값: 200000)            |
+| `AI_COMMIT_MAX_FILES`        | 처리할 최대 파일 수 (기본값: 50)                         |
+| `AI_COMMIT_MAX_LINES`        | 파일당 포함할 최대 줄 수 (기본값: 15)                    |
+| `AI_COMMIT_INCLUDE_SNIPPETS` | `0`으로 설정하면 프롬프트에서 코드 조각을 비활성화       |
+| `AI_COMMIT_AUTO_STAGE`       | `1`로 설정 시 자동 스테이징, `0`일 경우 비어 있으면 실패 |
+| `AI_COMMIT_SIGN`             | `1`로 설정 시 커밋 서명 (`git commit -S`)                |
+| `AI_COMMIT_AMEND`            | `1`로 설정 시 커밋 수정 (`git commit --amend`)           |
 
 ## 기여하기
 

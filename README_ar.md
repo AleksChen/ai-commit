@@ -2,6 +2,8 @@
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
+![Cover](assets/social-preview.png)
+
 أداة CLI قوية تقوم بإنشاء رسائل **Conventional Commits** من تغييرات git الخاصة بك باستخدام واجهات برمجة تطبيقات متوافقة مع OpenAI. توقف عن المعاناة مع رسائل الالتزام (commit messages). دع الذكاء الاصطناعي يكتبها لك — موجزة، موحدة، وذات مغزى. **🔒 آمن تمامًا | 🛡️ الخصوصية أولاً | 🆓 100% مجاني ومفتوح المصدر**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
@@ -117,18 +119,18 @@ ai-commit cost
 
 يمكنك تجاوز التكوين باستخدام متغيرات البيئة، وهو مفيد لخطوط أنابيب CI/CD:
 
-| المتغير | الوصف |
-| --- | --- |
-| `AI_COMMIT_API_KEY` | مفتاح API الخاص بك |
-| `AI_COMMIT_BASE_URL` | عنوان URL الأساسي المخصص لـ API |
-| `AI_COMMIT_MODEL` | اسم النموذج (مثال: `gpt-4`, `deepseek-chat`) |
-| `AI_COMMIT_MAX_CHARS` | الحد الأقصى للأحرف لسياق الفرق (الافتراضي: 200000) |
-| `AI_COMMIT_MAX_FILES` | الحد الأقصى للملفات للمعالجة (الافتراضي: 50) |
-| `AI_COMMIT_MAX_LINES` | الحد الأقصى للأسطر لكل ملف لتضمينها (الافتراضي: 15) |
-| `AI_COMMIT_INCLUDE_SNIPPETS` | اضبط على `0` لتعطيل مقتطفات التعليمات البرمجية في المطالبة |
-| `AI_COMMIT_AUTO_STAGE` | تعيين إلى `1` لتجهيز التغييرات تلقائيًا، `0` للفشل إذا كانت فارغة |
-| `AI_COMMIT_SIGN` | اضبط على `1` لتوقيع الالتزامات (`git commit -S`) |
-| `AI_COMMIT_AMEND` | اضبط على `1` لتعديل الالتزامات (`git commit --amend`) |
+| المتغير                      | الوصف                                                             |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `AI_COMMIT_API_KEY`          | مفتاح API الخاص بك                                                |
+| `AI_COMMIT_BASE_URL`         | عنوان URL الأساسي المخصص لـ API                                   |
+| `AI_COMMIT_MODEL`            | اسم النموذج (مثال: `gpt-4`, `deepseek-chat`)                      |
+| `AI_COMMIT_MAX_CHARS`        | الحد الأقصى للأحرف لسياق الفرق (الافتراضي: 200000)                |
+| `AI_COMMIT_MAX_FILES`        | الحد الأقصى للملفات للمعالجة (الافتراضي: 50)                      |
+| `AI_COMMIT_MAX_LINES`        | الحد الأقصى للأسطر لكل ملف لتضمينها (الافتراضي: 15)               |
+| `AI_COMMIT_INCLUDE_SNIPPETS` | اضبط على `0` لتعطيل مقتطفات التعليمات البرمجية في المطالبة        |
+| `AI_COMMIT_AUTO_STAGE`       | تعيين إلى `1` لتجهيز التغييرات تلقائيًا، `0` للفشل إذا كانت فارغة |
+| `AI_COMMIT_SIGN`             | اضبط على `1` لتوقيع الالتزامات (`git commit -S`)                  |
+| `AI_COMMIT_AMEND`            | اضبط على `1` لتعديل الالتزامات (`git commit --amend`)             |
 
 ## المساهمة
 

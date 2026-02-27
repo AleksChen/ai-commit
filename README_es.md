@@ -1,6 +1,8 @@
 # AI Commit
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
+![Cover](assets/social-preview.png)
+
 
 Una potente herramienta CLI que genera mensajes de **Conventional Commits** a partir de tus cambios en git utilizando APIs compatibles con OpenAI. Deja de luchar con los mensajes de commit. Deja que la IA los escriba por ti: concisos, estandarizados y significativos. **🔒 Absolutamente Seguro | 🛡️ Privacidad Primero | 🆓 100% Gratis y Código Abierto**
 

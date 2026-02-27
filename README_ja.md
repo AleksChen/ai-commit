@@ -2,6 +2,9 @@
 
 **[English](README.md) | [简体中文](README_zh.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Español](README_es.md) | [العربية](README_ar.md)**
 
+![Cover](assets/social-preview.png)
+
+
 OpenAI互換APIを使用して、gitの変更から**Conventional Commits**メッセージを生成する強力なCLIツールです。コミットメッセージに悩むのはもうやめましょう。簡潔で、標準化された、意味のあるメッセージをAIに書いてもらいましょう。**🔒 絶対安全 | 🛡️ プライバシー優先 | 🆓 100% 無料・オープンソース**
 
 ![License](https://img.shields.io/npm/l/@alekschen/ai-commit)
